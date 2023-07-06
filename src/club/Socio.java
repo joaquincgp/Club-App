@@ -1,4 +1,5 @@
 package club;
+import javax.swing.*;
 import java.util.ArrayList;
 
 /**
@@ -222,13 +223,13 @@ public class Socio
     {
         if( tipoSubscripcion == Tipo.VIP && pFondos + fondos > MONTO_MAXIMO_VIP )
         {
-            System.out.println("Con este monto se exceder�an los fondos m�ximos de un socio VIP, ingrese una cantidad menor" );
+            JOptionPane.showMessageDialog(null,"Con este monto se exceder�an los fondos m�ximos de un socio VIP, ingrese una cantidad menor" );
 
 
         }
         else if( tipoSubscripcion == Tipo.REGULAR && pFondos + fondos > MONTO_MAXIMO_REGULARES )
         {
-            System.out.println( "Con este monto se exceder�an los fondos m�ximos de un socio regular, ingrese una cantidad menor" );
+            JOptionPane.showMessageDialog( null,"Con este monto se exceder�an los fondos m�ximos de un socio regular, ingrese una cantidad menor" );
         }
         else
         {
@@ -251,7 +252,7 @@ public class Socio
 
         if( pValor > fondos )
         {
-            System.out.println( "El socio no posee fondos suficientes para este consumo" );
+            JOptionPane.showMessageDialog( null,"El socio no posee fondos suficientes para este consumo" );
         }
         else
         {
@@ -272,13 +273,13 @@ public class Socio
         // Verificar que el nombre del socio no es el mismo del que se quiere autorizar
         if( pNombreAutorizado.equals( darNombre( ) ) )
         {
-            System.out.println( "No puede agregar el socio como autorizado." );
+            JOptionPane.showMessageDialog(null, "No puede agregar el socio como autorizado." );
         }
 
         // Verificar que el socio posee fondos para financiar un nuevo autorizado
         if( fondos == 0 )
         {
-            System.out.println( "El socio no tiene fondos para financiar un nuevo autorizado." );
+            JOptionPane.showMessageDialog(null, "El socio no tiene fondos para financiar un nuevo autorizado." );
         }
         // Si el nombre no exist�a entonces lo agregamos
         if( !existeAutorizado( pNombreAutorizado ) )
@@ -287,7 +288,7 @@ public class Socio
         }
         else
         {
-            System.out.println("El autorizado ya existe." );
+            JOptionPane.showMessageDialog(null,"El autorizado ya existe." );
         }
     }
 
@@ -303,7 +304,7 @@ public class Socio
         boolean encontro = false;
         int numAutorizados = autorizados.size( );
         if(tieneFacturaAsociada( pNombreAutorizado )){
-            System.out.println( pNombreAutorizado + " tiene una factura sin pagar.");
+            JOptionPane.showMessageDialog(null, pNombreAutorizado + " tiene una factura sin pagar.");
         }
         for( int i = 0; i < numAutorizados && !encontro; i++ )
         {
@@ -330,7 +331,7 @@ public class Socio
         Factura factura = facturas.get( pIndiceFactura );
         if( factura.darValor( ) > fondos )
         {
-            System.out.println( "El socio no posee fondos suficientes para pagar esta factura" );
+            JOptionPane.showMessageDialog(null,"El socio no posee fondos suficientes para pagar esta factura" );
         }
         else
         {

@@ -3,6 +3,8 @@ package club;
 import java.util.ArrayList;
 import club.Socio.Tipo;
 
+import javax.swing.*;
+
 /**
  * Clase que modela un club.
  */
@@ -68,7 +70,7 @@ public class Club
         Socio s = buscarSocio( pCedula );
         if( pTipo == Tipo.VIP && contarSociosVIP( ) == MAXIMO_VIP )
         {
-            System.out.println("El club en el momento no acepta m�s socios VIP" );
+            JOptionPane.showMessageDialog(null,"El club en el momento no acepta m�s socios VIP" );
 
         }
         // Revisar que no se haya alcanzado el l�mite de subscripciones VIP
@@ -81,7 +83,7 @@ public class Club
         }
         else
         {
-            System.out.println( "El socio ya existe" );
+            JOptionPane.showMessageDialog( null,"El socio ya existe" );
         }
     }
 
@@ -251,25 +253,25 @@ public class Club
         Socio socio = buscarSocio(pCedulaSocio);
         // Caso 1: No existe un socio con la cédula recibida
         if (socio == null) {
-            System.out.println("No existe un socio con la cédula " + pCedulaSocio);
+            JOptionPane.showMessageDialog(null, "No existe un socio con la cédula " + pCedulaSocio);
             return false;
         }
 
         // Caso 2: El socio es de tipo VIP
         if (socio.darTipo() == Tipo.VIP) {
-            System.out.println("No se puede eliminar un socio de tipo VIP");
+            JOptionPane.showMessageDialog(null, "No se puede eliminar un socio de tipo VIP");
             return false;
         }
 
         // Caso 3: El socio tiene facturas pendientes de pago
         if (!socio.darFacturas().isEmpty()) {
-            System.out.println("No se puede eliminar un socio con facturas pendientes de pago");
+            JOptionPane.showMessageDialog(null, "No se puede eliminar un socio con facturas pendientes de pago");
             return false;
         }
 
         // Caso 4: El socio tiene más de un autorizado
         if (socio.darAutorizados().size() > 1) {
-            System.out.println("No se puede eliminar un socio con más de un autorizado");
+            JOptionPane.showMessageDialog(null, "No se puede eliminar un socio con más de un autorizado");
             return false;
         }
 
