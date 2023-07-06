@@ -24,7 +24,9 @@ public class MainGUI extends JFrame {
     private JLabel titulo;
     private JTextField cedulaSocioAutorizar;
     private JButton registrarAutorizaciónButton;
-    private JTextField nombreNuevoAutorizado;
+    private JTextField textFieldNombreNuevoAutorizado;
+    private JTextField textCedulaFactura;
+    private JTextField textIndice;
     private Club club = new Club();
 
     public static void main(String[] args) {
@@ -79,6 +81,36 @@ public class MainGUI extends JFrame {
         });
 
 
+        registrarAutorizaciónButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String cedulaSocio;
+                cedulaSocio = cedulaSocioAutorizar.getText();
+                    if (club.buscarSocio(cedulaSocio) != null) {
+                        String nombreAutorizado = textFieldNombreNuevoAutorizado.getText();
+                        club.agregarAutorizadoSocio(cedulaSocio, nombreAutorizado);
+                        JOptionPane.showMessageDialog(MainGUI.this, nombreAutorizado+" esta autorizado", "EXITO", JOptionPane.INFORMATION_MESSAGE);
+
+                    }else{
+                        JOptionPane.showMessageDialog(MainGUI.this, "El socio no existe. Intenta nuevamente", "ERROR", JOptionPane.INFORMATION_MESSAGE);
+
+                    }
+            }
+        });
+        pagarFacturaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String cedulaFactura;
+                int indice;
+                cedulaFactura = textCedulaFactura.getText();
+                indice = Integer.parseInt(textIndice.getText());
+                if(cedulaFactura!= null && indice >=0) {
+                    club.pagarFacturaSocio(cedulaFactura, indice);
+                }else{
+                    JOptionPane.showMessageDialog(MainGUI.this, "Ingrese un valor valido", "ERROR", JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+        });
     }
 
 
