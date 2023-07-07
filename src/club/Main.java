@@ -57,7 +57,7 @@ public class Main {
                     String cedulaSocioPago = sc.next();
                     System.out.print("Ingrese el índice de la factura a pagar: ");
                     int indiceFactura = sc.nextInt();
-                    club.pagarFacturaSocio(cedulaSocioPago, indiceFactura);
+
                     break;
                 }
                 case 4:{

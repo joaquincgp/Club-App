@@ -65,7 +65,7 @@ public class Club
      */
     public void afiliarSocio( String pCedula, String pNombre, Tipo pTipo )
     {
-
+        try{
         // Revisar que no haya ya un socio con la misma c�dula
         Socio s = buscarSocio( pCedula );
         if( pTipo == Tipo.VIP && contarSociosVIP( ) == MAXIMO_VIP )
@@ -80,10 +80,15 @@ public class Club
             Socio nuevoSocio = new Socio( pCedula, pNombre, pTipo );
             // Se agrega el nuevo socio al club
             socios.add( nuevoSocio );
+            JOptionPane.showMessageDialog(null, "Se afilió al nuevo socio. Bienvenido "+pNombre,"EXITO", JOptionPane.INFORMATION_MESSAGE);
         }
         else
         {
             JOptionPane.showMessageDialog( null,"El socio ya existe" );
+
+        }
+    }catch (Exception e) {
+            throw new IllegalArgumentException("Error al afiliar al socio: " + e.getMessage());
         }
     }
 
@@ -95,6 +100,7 @@ public class Club
      */
     public Socio buscarSocio( String pCedulaSocio )
     {
+        try{
         Socio elSocio = null;
 
         boolean encontre = false;
@@ -110,6 +116,9 @@ public class Club
         }
 
         return elSocio;
+    }catch (Exception e) {
+            throw new IllegalArgumentException("Error al buscar el socio: " + e.getMessage());
+        }
     }
 
     /**
@@ -119,6 +128,7 @@ public class Club
      */
     public int contarSociosVIP( )
     {
+        try{
         int conteo = 0;
         for( Socio socio : socios )
         {
@@ -128,6 +138,9 @@ public class Club
             }
         }
         return conteo;
+    }catch (Exception e) {
+            throw new IllegalArgumentException("Error al contar los socios VIP: " + e.getMessage());
+        }
     }
 
     /**
@@ -139,6 +152,7 @@ public class Club
      */
     public ArrayList<String> darAutorizadosSocio( String pCedulaSocio )
     {
+        try{
         Socio s = buscarSocio( pCedulaSocio );
         ArrayList<String> autorizados = new ArrayList<String>( );
 
@@ -146,6 +160,9 @@ public class Club
         autorizados.addAll( s.darAutorizados( ) );
 
         return autorizados;
+    }catch (Exception e) {
+            throw new IllegalArgumentException("Error al devolver la lista de autorizados: " + e.getMessage());
+        }
     }
 
     /**
@@ -157,9 +174,13 @@ public class Club
      */
     public void agregarAutorizadoSocio( String pCedulaSocio, String pNombreAutorizado )
     {
+        try{
         Socio s = buscarSocio( pCedulaSocio );
         s.agregarAutorizado( pNombreAutorizado );
 
+    }catch (Exception e) {
+            throw new IllegalArgumentException("Error al agregar autorizado: " + e.getMessage());
+        }
     }
 
     /**
@@ -170,10 +191,26 @@ public class Club
      */
     public void eliminarAutorizadoSocio( String pCedulaSocio, String pNombreAutorizado )
     {
+        try{
         Socio s = buscarSocio( pCedulaSocio );
         s.eliminarAutorizado( pNombreAutorizado );
+    }catch (Exception e) {
+            throw new IllegalArgumentException("Error al eliminar autorizado: " + e.getMessage());
+        }
     }
 
+    /**
+     * Eliminar un socio
+     */
+    public void eliminarSocio(String pCedula){
+        int indice = 0;
+        for (Socio s : socios) {
+            if (s.darCedula().equals(pCedula)) {
+                socios.remove(indice);
+            }
+            indice++;
+        }
+    }
     /**
      * Registra un consumo a un socio o a su autorizado. <br>
      * <b>post: </b> Se agreg� una nueva factura al vector del socio.
@@ -183,10 +220,13 @@ public class Club
      * @param pValor El valor del consumo. pValor >= 0.
      *
      */
-    public void registrarConsumo( String pCedulaSocio, String pNombreCliente, String pConcepto, double pValor )
-    {
-        Socio s = buscarSocio( pCedulaSocio );
-        s.registrarConsumo( pNombreCliente, pConcepto, pValor );
+    public void registrarConsumo( String pCedulaSocio, String pNombreCliente, String pConcepto, double pValor ) {
+        try{
+        Socio s = buscarSocio(pCedulaSocio);
+        s.registrarConsumo(pNombreCliente, pConcepto, pValor);
+    }catch (Exception e) {
+            throw new IllegalArgumentException("Error al registrar consumo: " + e.getMessage());
+        }
     }
 
     /**
@@ -203,14 +243,16 @@ public class Club
      * Realiza el pago de la factura de un socio. <br>
      * <b>post: </b> Se borr� la factura del vector del socio. <br>
      * @param pCedulaSocio La c�dula del socio. pCedulaSocio != null && pCedulaSocio != "".
-     * @param pFacturaIndice El �ndice de la factura a pagar. pFacturaIndice >= 0.
+     * @param pNombre El nombre al que esta la factura a pagar. pFacturaIndice >= 0.
      *
      */
-    public void pagarFacturaSocio( String pCedulaSocio, int pFacturaIndice )
+    public void pagarFacturaSocio( String pCedulaSocio, String pNombre )
     {
         Socio s = buscarSocio( pCedulaSocio );
-        s.pagarFactura( pFacturaIndice );
-
+        if(s != null) {
+            s.pagarFactura(pNombre);
+            JOptionPane.showMessageDialog(null, "Se pago la factura");
+        }
     }
 
     /**
@@ -253,7 +295,6 @@ public class Club
         Socio socio = buscarSocio(pCedulaSocio);
         // Caso 1: No existe un socio con la cédula recibida
         if (socio == null) {
-            JOptionPane.showMessageDialog(null, "No existe un socio con la cédula " + pCedulaSocio);
             return false;
         }
 
@@ -277,23 +318,5 @@ public class Club
 
         // Si no se cumple ninguno de los casos anteriores, el socio puede ser eliminado
         return true;
-    }
-
-    /**
-     * Extensi�n 1.
-     * @return Resultado extensi�n 1.
-     */
-    public String metodo1( )
-    {
-        return "respuesta1";
-    }
-
-    /**
-     * Extensi�n 2.
-     * @return Resultado extensi�n 2.
-     */
-    public String metodo2( )
-    {
-        return "respuesta2";
     }
 }

@@ -97,6 +97,10 @@ public class Socio
      */
     public Socio( String pCedula, String pNombre, Tipo pTipo )
     {
+        try{
+            if (pCedula == null || pCedula.isEmpty() || pNombre == null || pNombre.isEmpty() || pTipo == null) {
+                throw new IllegalArgumentException("Parámetros inválidos para crear un socio.");
+            }
         cedula = pCedula;
         nombre = pNombre;
         tipoSubscripcion = pTipo;
@@ -112,6 +116,9 @@ public class Socio
 
         facturas = new ArrayList<Factura>( );
         autorizados = new ArrayList<String>( );
+    }catch(NullPointerException | IllegalArgumentException e){
+            JOptionPane.showMessageDialog(null, "Error al crear el socio: " + e.getMessage(), "Error", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     // -----------------------------------------------------------------
@@ -221,19 +228,23 @@ public class Socio
      */
     public void aumentarFondos( double pFondos )
     {
-        if( tipoSubscripcion == Tipo.VIP && pFondos + fondos > MONTO_MAXIMO_VIP )
-        {
-            JOptionPane.showMessageDialog(null,"Con este monto se exceder�an los fondos m�ximos de un socio VIP, ingrese una cantidad menor" );
+        try {
+            if (pFondos < 0) {
+                throw new IllegalArgumentException("El valor de aumento de fondos debe ser mayor o igual a cero.");
+            }
+            if (tipoSubscripcion == Tipo.VIP && pFondos + fondos > MONTO_MAXIMO_VIP) {
+                JOptionPane.showMessageDialog(null, "Con este monto se exceder�an los fondos m�ximos de un socio VIP, ingrese una cantidad menor");
 
 
-        }
-        else if( tipoSubscripcion == Tipo.REGULAR && pFondos + fondos > MONTO_MAXIMO_REGULARES )
-        {
-            JOptionPane.showMessageDialog( null,"Con este monto se exceder�an los fondos m�ximos de un socio regular, ingrese una cantidad menor" );
-        }
-        else
-        {
-            fondos = fondos + pFondos;
+            } else if (tipoSubscripcion == Tipo.REGULAR && pFondos + fondos > MONTO_MAXIMO_REGULARES) {
+                JOptionPane.showMessageDialog(null, "Con este monto se exceder�an los fondos m�ximos de un socio regular, ingrese una cantidad menor");
+            } else {
+                fondos = fondos + pFondos;
+            }
+        }catch (IllegalArgumentException e){
+            JOptionPane.showMessageDialog(null, "Error al aumentar los fondos del socio: " + e.getMessage());
+        }catch (Exception e) {
+            JOptionPane.showMessageDialog(null,"Error desconocido al aumentar los fondos del socio" + e.getMessage());
         }
     }
 
@@ -249,15 +260,23 @@ public class Socio
      */
     public void registrarConsumo( String pNombre, String pConcepto, double pValor )
     {
-
-        if( pValor > fondos )
-        {
-            JOptionPane.showMessageDialog( null,"El socio no posee fondos suficientes para este consumo" );
-        }
-        else
-        {
-            Factura nuevaFactura = new Factura( pNombre, pConcepto, pValor );
-            facturas.add( nuevaFactura );
+        try {
+            if (pNombre == null || pNombre.isEmpty() || pConcepto == null || pConcepto.isEmpty() || pValor <= 0) {
+                throw new IllegalArgumentException("Parámetros inválidos para registrar un consumo.");
+            }
+            if (pValor > fondos) {
+                JOptionPane.showMessageDialog(null, "El socio no posee fondos suficientes para este consumo");
+            }
+            Factura nuevaFactura = new Factura(pNombre, pConcepto, pValor);
+            facturas.add(nuevaFactura);
+            JOptionPane.showMessageDialog(null, "Consumo registrado con exito");
+            if (!existeAutorizado(pNombre)) {
+                JOptionPane.showMessageDialog(null, "El cliente no tiene personas autorizadas");
+            }
+        }catch(IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(null,"Error al registrar el consumo del socio: " + e.getMessage());
+        }catch (Exception e) {
+            JOptionPane.showMessageDialog(null,"Error desconocido al registrar consumo" + e.getMessage());
         }
     }
 
@@ -268,27 +287,30 @@ public class Socio
      * @param pNombreAutorizado Es el nombre de la nueva persona autorizada para el socio. pNombreAutorizado != null.
      *
      */
-    public void agregarAutorizado( String pNombreAutorizado )
-    {
-        // Verificar que el nombre del socio no es el mismo del que se quiere autorizar
-        if( pNombreAutorizado.equals( darNombre( ) ) )
-        {
-            JOptionPane.showMessageDialog(null, "No puede agregar el socio como autorizado." );
-        }
+    public void agregarAutorizado( String pNombreAutorizado ) {
+        try {
+            if (pNombreAutorizado == null || pNombreAutorizado.isEmpty()) {
+                throw new IllegalArgumentException("El nombre del autorizado a agregar es inválido.");
+            }
+            // Verificar que el nombre del socio no es el mismo del que se quiere autorizar
+            if (pNombreAutorizado.equals(darNombre())) {
+                JOptionPane.showMessageDialog(null, "No puede agregar el socio como autorizado.");
+            }
 
-        // Verificar que el socio posee fondos para financiar un nuevo autorizado
-        if( fondos == 0 )
-        {
-            JOptionPane.showMessageDialog(null, "El socio no tiene fondos para financiar un nuevo autorizado." );
-        }
-        // Si el nombre no exist�a entonces lo agregamos
-        if( !existeAutorizado( pNombreAutorizado ) )
-        {
-            autorizados.add( pNombreAutorizado );
-        }
-        else
-        {
-            JOptionPane.showMessageDialog(null,"El autorizado ya existe." );
+            // Verificar que el socio posee fondos para financiar un nuevo autorizado
+            if (fondos == 0) {
+                JOptionPane.showMessageDialog(null, "El socio no tiene fondos para financiar un nuevo autorizado.");
+            }
+            // Si el nombre no exist�a entonces lo agregamos
+            if (!existeAutorizado(pNombreAutorizado)) {
+                autorizados.add(pNombreAutorizado);
+            } else {
+                JOptionPane.showMessageDialog(null, "El autorizado ya existe.");
+            }
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(null,"Error al agregar un autorizado al socio: " + e.getMessage());
+        }catch (Exception e) {
+            JOptionPane.showMessageDialog(null,"Error desconocido al agregar autorizado" + e.getMessage());
         }
     }
 
@@ -299,45 +321,50 @@ public class Socio
      * @param pNombreAutorizado Nombre del autorizado. pNombreAutorizado != null.
      *
      */
-    public void eliminarAutorizado( String pNombreAutorizado )
-    {
-        boolean encontro = false;
-        int numAutorizados = autorizados.size( );
-        if(tieneFacturaAsociada( pNombreAutorizado )){
-            JOptionPane.showMessageDialog(null, pNombreAutorizado + " tiene una factura sin pagar.");
-        }
-        for( int i = 0; i < numAutorizados && !encontro; i++ )
-        {
-            String a = autorizados.get( i );
-            if( a.equals( pNombreAutorizado ) )
-            {
-                encontro = true;
-                autorizados.remove( i );
+    public void eliminarAutorizado( String pNombreAutorizado ) {
+        try {
+            if (pNombreAutorizado == null || pNombreAutorizado.isEmpty()) {
+                throw new IllegalArgumentException("El nombre del autorizado a eliminar es inválido.");
             }
+            boolean encontro = false;
+            int numAutorizados = autorizados.size();
+            if (tieneFacturaAsociada(pNombreAutorizado)) {
+                JOptionPane.showMessageDialog(null, pNombreAutorizado + " tiene una factura sin pagar.");
+            }
+            for (int i = 0; i < numAutorizados && !encontro; i++) {
+                String a = autorizados.get(i);
+                if (a.equals(pNombreAutorizado)) {
+                    encontro = true;
+                    autorizados.remove(i);
+                }
+            }
+        }catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(null,"Error al eliminar un autorizado del socio: " + e.getMessage());
+        }catch (Exception e) {
+            JOptionPane.showMessageDialog(null,"Error desconocido al eliminar un autorizado" + e.getMessage());
         }
-
-
     }
 
     /**
      * Paga la factura con el �ndice dado. <br>
      * <b>pre: </b> La lista de facturas ha sido inicializada. <br>
      * <b>post: </b> Se borr� la factura de la lista de facturas.
-     * @param pIndiceFactura Posici�n de la factura a eliminar. facturaIndice >= 0.
+     * @param pNombre Nombre del titular al que se hizo la factura a eliminar. facturaIndice >= 0.
      *
      */
-    public void pagarFactura( int pIndiceFactura )
+    public void pagarFactura( String pNombre )
     {
-        Factura factura = facturas.get( pIndiceFactura );
-        if( factura.darValor( ) > fondos )
-        {
-            JOptionPane.showMessageDialog(null,"El socio no posee fondos suficientes para pagar esta factura" );
-        }
-        else
-        {
-            fondos = fondos - factura.darValor( );
-            facturas.remove( pIndiceFactura );
-        }
+            int indice = 0;
+            for (Factura f : facturas) {
+                if (f.darNombre().equals(pNombre)) {
+                    fondos = fondos - f.darValor();
+                    facturas.remove(indice);
+                }
+                if (f.darValor() > fondos) {
+                    JOptionPane.showMessageDialog(null, "El socio no posee fondos suficientes para pagar esta factura");
+                }
+                indice++;
+            }
     }
 
     /**
